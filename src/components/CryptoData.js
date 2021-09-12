@@ -8,12 +8,14 @@ import TableHead from '@material-ui/core/TableHead';
 import TablePagination from '@material-ui/core/TablePagination';
 import TableRow from '@material-ui/core/TableRow';
 import axios from 'axios';
-import React, { useEffect, useState } from 'react';
-
+import React, { useContext, useEffect, useState } from 'react';
+import { SearchContext } from './context';
+import { CryptoContext } from './context/CryptoStore';
 
 const useStyles = makeStyles({
 	root: {
-		width: '100%',
+		width: '70%',
+		margin: '0 auto'
 	},
 	container: {
 		maxHeight: 600,
@@ -23,10 +25,11 @@ const useStyles = makeStyles({
 export const CryptoData = ({currency}) => {
 	const classes = useStyles();
 	const [page, setPage] = useState(0);
-	const [rowsPerPage, setRowsPerPage] = useState(10);
-	const [currencyData, setCurrencyData] = useState([]);
+	const [rowsPerPage, setRowsPerPage] = useState(100);
+	const [cryptoData, setCryptoData] = useContext(CryptoContext);
+	const searchTerm = useContext(SearchContext)[0];
 
-	const handleChangePage = (newPage) => {
+	const handleChangePage = (event, newPage) => {
 		setPage(newPage);
 	};
 
@@ -40,28 +43,28 @@ export const CryptoData = ({currency}) => {
 			const { data } = await axios.get(
 				`https://api.coingecko.com/api/v3/coins/markets?vs_currency=${currency}&order=market_cap_desc&per_page=100&page=1&sparkline=false`
 			);
-			setCurrencyData(data);
+			setCryptoData(data);
 		};
 		fetchCrypto();
 	}, [currency]);
 
-		const rows = currencyData.map((coin, index) => {
+		const rows = cryptoData && cryptoData.map((coin, index) => {
 			return {
 				id: index + 1,
 				name: coin.name,
 				price: new Intl.NumberFormat(currency, {
 					style: 'currency',
-					currency: currency,
+					currency: currency
 				}).format(coin.current_price),
 				image: coin.image,
 				cap: new Intl.NumberFormat(currency, {
 					style: 'currency',
-					currency: currency,
+					currency: currency
 				}).format(coin.market_cap),
 				priceChange: new Intl.NumberFormat(currency, {
 					style: 'currency',
-					currency: currency,
-				}).format(coin.price_change_24h),
+					currency: currency
+				}).format(coin.price_change_24h)
 			};
 		});
 
@@ -81,22 +84,29 @@ export const CryptoData = ({currency}) => {
 					<TableBody>
 						{rows
 							.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-							.map((row) => (
-								<TableRow key={row.id}>
-									<TableCell component="th" scope="row">
-										{row.id}
-									</TableCell>
-									<TableCell component="th" scope="row">
-										<img src={row.image} className="coin-image" alt="crypto currency"/>{' '}
-										<strong>{row.name}</strong>
-									</TableCell>
-									<TableCell>
-										<strong>{row.price}</strong>
-									</TableCell>
-									<TableCell>{row.cap}</TableCell>
-									<TableCell>{row.priceChange}</TableCell>
-								</TableRow>
-							))}
+							.filter((value) => value.name.toLowerCase().includes(searchTerm))
+							.map((row) =>
+								(
+									<TableRow key={row.id}>
+										<TableCell component="th" scope="row">
+											{row.id}
+										</TableCell>
+										<TableCell component="th" scope="row">
+											<img
+												src={row.image}
+												className="coin-image"
+												alt="crypto currency"
+											/>{' '}
+											<strong>{row.name}</strong>
+										</TableCell>
+										<TableCell>
+											<strong>{row.price}</strong>
+										</TableCell>
+										<TableCell>{row.cap}</TableCell>
+										<TableCell>{row.priceChange}</TableCell>
+									</TableRow>
+								))
+							}
 					</TableBody>
 				</Table>
 			</TableContainer>
@@ -106,8 +116,8 @@ export const CryptoData = ({currency}) => {
 				count={rows.length}
 				rowsPerPage={rowsPerPage}
 				page={page}
-				onChangePage={handleChangePage}
-				onChangeRowsPerPage={handleChangeRowsPerPage}
+				onPageChange={handleChangePage}
+				onRowsPerPageChange={handleChangeRowsPerPage}
 			/>
 		</Paper>
 	);

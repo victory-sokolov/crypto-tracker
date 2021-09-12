@@ -1,24 +1,28 @@
 import React, { useContext } from 'react';
-import { CurrencyContext } from './CurrencyContext';
+import { CurrencyContext } from '../context';
+import './style.scss'
 
-export const Currency = () => {
-
-	const [currency, setCurrency] = useContext(CurrencyContext);
+const Currency = () => {
+	const setCurrency = useContext(CurrencyContext)[1];
 
 	const onCurrencyChange = (e) => {
 		setCurrency(e.target.value);
 	}
 
     return (
-			<div>
+			<div className="currency-selector">
 				<select
 					name="currecny"
 					className="currency"
 					onChange={onCurrencyChange}
 				>
-					<option value="usd">USD</option>
+					<option value="usd">
+						USD
+					</option>
 					<option value="eur">EUR</option>
 				</select>
 			</div>
 		);
 }
+
+export default Currency;
