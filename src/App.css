@@ -14,17 +14,11 @@
 	padding-bottom: 40px;
 }
 
-.crypto-table {
-	margin-top: 60px;
-	height: 400px;
-	width: 100%;
+table tr:hover {
+	background-color: #e6f0ff;
 }
 
 .coin-image {
 	width: 16px;
 	height: 16px;
-}
-
-.currency {
-	padding: 8px;
 }
