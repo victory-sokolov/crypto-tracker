@@ -85,28 +85,32 @@ export const CryptoData = ({currency}) => {
 						{rows
 							.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
 							.filter((value) => value.name.toLowerCase().includes(searchTerm))
-							.map((row) =>
-								(
-									<TableRow key={row.id}>
-										<TableCell component="th" scope="row">
-											{row.id}
-										</TableCell>
-										<TableCell component="th" scope="row">
-											<img
-												src={row.image}
-												className="coin-image"
-												alt="crypto currency"
-											/>{' '}
-											<strong>{row.name}</strong>
-										</TableCell>
-										<TableCell>
-											<strong>{row.price}</strong>
-										</TableCell>
-										<TableCell>{row.cap}</TableCell>
-										<TableCell>{row.priceChange}</TableCell>
-									</TableRow>
-								))
-							}
+							.map((row) => (
+								<TableRow key={row.id}>
+									<TableCell component="th" scope="row">
+										{row.id}
+									</TableCell>
+									<TableCell component="th" scope="row">
+										<img
+											src={row.image}
+											className="coin-image"
+											alt="crypto currency"
+										/>{' '}
+										<strong>{row.name}</strong>
+									</TableCell>
+									<TableCell>
+										<strong>{row.price}</strong>
+									</TableCell>
+									<TableCell>{row.cap}</TableCell>
+									<TableCell
+										style={{
+											color: row.priceChange.includes('-') ? 'red' : 'green'
+										}}
+									>
+										{row.priceChange}
+									</TableCell>
+								</TableRow>
+							))}
 					</TableBody>
 				</Table>
 			</TableContainer>
